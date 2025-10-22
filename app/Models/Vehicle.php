@@ -21,7 +21,7 @@ class Vehicle extends Model
 
     public function alerts(): HasMany
     {
-        return $this->hasMany(MaintenanceAlert::class, 'id', 'user_id');
+        return $this->hasMany(MaintenanceAlert::class, 'vehicle_id', 'id');
     }
 
     public function maintenances(): HasMany

@@ -17,6 +17,8 @@ class VehicleController extends Controller
 {
     use ApiResponser;
 
+    const MAX_PAGE_SIZE = 15;
+
     /**
      * Função responsável por listar os veículos de um usuário
      *
@@ -28,8 +30,8 @@ class VehicleController extends Controller
         try {
             $userId = auth('api')->user()->id;
 
-            $perPage = $request->input('per_page', 15);
-            $perPage = ($perPage > 15) ? 15 : $perPage;
+            $perPage = $request->input('per_page', self::MAX_PAGE_SIZE);
+            $perPage = ($perPage > self::MAX_PAGE_SIZE) ? self::MAX_PAGE_SIZE : $perPage;
 
             $vehicles = Vehicle::query()
                 ->where('user_id', '=', $userId)

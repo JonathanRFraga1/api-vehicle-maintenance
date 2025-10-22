@@ -54,4 +54,20 @@ class VehiclePolicy
 
         return true;
     }
+
+    /**
+     * Validação de acesso para vincular um veículo a uma manutenção
+     *
+     * @param User $user
+     * @param Vehicle $vehicle
+     * @return boolean
+     */
+    public function addMaintenance(User $user, Vehicle $vehicle): bool
+    {
+        if ($user->id !== $vehicle->user_id) {
+            abort(404);
+        }
+
+        return true;
+    }
 }
