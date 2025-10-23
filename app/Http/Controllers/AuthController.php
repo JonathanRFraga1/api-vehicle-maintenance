@@ -5,67 +5,99 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Resources\UserRescource;
+use App\Traits\ApiResponser;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request)
+    use ApiResponser;
+
+    /**
+     * Função responsável pelo cadastro de um novo usuário
+     *
+     * @param RegisterRequest $request
+     * @return JsonResponse
+     */
+    public function register(RegisterRequest $request): JsonResponse
     {
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
         $token = JWTAuth::fromUser($user);
 
-        return response()->json([
-            'message' => 'Usuário registrado com sucesso',
-            'user' => $user,
-            'token' => $token,
-        ], 201);
+        $response = [
+            'user'         => new UserRescource($user),
+            'access_token' => $token,
+        ];
+
+        return $this->success($response, 'User created', 201);
     }
 
-    public function login(LoginRequest $request)
+    /**
+     * Função responsável pelo login de um usuário
+     *
+     * @param LoginRequest $request
+     * @return JsonResponse
+     */
+    public function login(LoginRequest $request): JsonResponse
     {
         $credentials = $request->only('email', 'password');
 
         if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json([
-                'message' => 'Credenciais inválidas'
-            ], 401);
+            return $this->error('Invalid Credentials', 401);
         }
 
         return $this->respondWithToken($token);
     }
 
-    public function me()
+    /**
+     * Função responsável por retornar do dado de um usuário
+     *
+     * @return JsonResponse
+     */
+    public function me(): JsonResponse
     {
-        return response()->json(auth('api')->user());
+        return $this->success(new UserRescource(auth('api')->user()), 'User found');
     }
 
-    public function logout()
+    /**
+     * Função responsável pelo logout de um usuário
+     *
+     * @return JsonResponse
+     */
+    public function logout(): JsonResponse
     {
         auth('api')->logout();
 
-        return response()->json([
-            'message' => 'Logout realizado com sucesso'
-        ]);
+        return $this->success(null, "Logout successful");
     }
 
-    public function refresh()
+    /**
+     * Função responsável pelo retorno do refresh token
+     *
+     * @return JsonResponse
+     */
+    public function refresh(): JsonResponse
     {
         return $this->respondWithToken(auth('api')->refresh());
     }
 
-    protected function respondWithToken($token)
+    protected function respondWithToken($token): JsonResponse
     {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60,
-            'user' => auth('api')->user()
-        ]);
+        return $this->success(
+            [
+                'access_token' => $token,
+                'token_type'   => 'bearer',
+                'expires_in'   => auth('api')->factory()->getTTL() * 60,
+                'user'         => new UserRescource(auth('api')->user())
+            ],
+            "Login successful"
+        );
     }
 }
