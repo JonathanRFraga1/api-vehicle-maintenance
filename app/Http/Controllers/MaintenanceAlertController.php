@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateMaintenanceAlertRequest;
 use App\Http\Resources\MaintenanceAlertResource;
 use App\Models\MaintenanceAlert;
 use App\Models\Vehicle;
-use App\Traits\ApiResponser;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,8 +16,6 @@ use Throwable;
 
 class MaintenanceAlertController extends Controller
 {
-    use ApiResponser;
-
     const MAX_PAGE_SIZE = 15;
 
     /**
@@ -54,6 +51,7 @@ class MaintenanceAlertController extends Controller
 
             return $this->success($maintenanceAlertsResponse, 'List of maintenance alerts');
         } catch (Throwable $t) {
+            $this->logError('Error on list maintenance alerts', $t);
             return $this->error('Error on list maintenance alerts', 500);
         }
     }
@@ -81,6 +79,7 @@ class MaintenanceAlertController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Vehicle not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on store maintenance alert', $t);
             return $this->error('Error on store maintenance alert', 500);
         }
     }
@@ -103,6 +102,7 @@ class MaintenanceAlertController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Maintenance alert not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on search maintenance alert', $t);
             return $this->error('Error on search maintenance alert', 500);
         }
     }
@@ -144,6 +144,7 @@ class MaintenanceAlertController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Maintenance alerts not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on search maintenance alerts', $t);
             return $this->error('Error on search maintenance alerts', 500);
         }
     }
@@ -173,6 +174,7 @@ class MaintenanceAlertController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Maintenance alert not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on update maintenance alert', $t);
             return $this->error('Error on update maintenance alert', 500);
         }
     }
@@ -194,6 +196,7 @@ class MaintenanceAlertController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Maintenance alert not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on remove maintenance alert', $t);
             return $this->error('Error on remove maintenance alert', 500);
         }
     }

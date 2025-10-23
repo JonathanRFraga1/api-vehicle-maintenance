@@ -6,15 +6,12 @@ use App\Models\User;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\UserRescource;
-use App\Traits\ApiResponser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
-    use ApiResponser;
-
     /**
      * Função responsável pelo cadastro de um novo usuário
      *

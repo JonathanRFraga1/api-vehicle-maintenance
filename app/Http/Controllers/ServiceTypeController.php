@@ -39,6 +39,7 @@ class ServiceTypeController extends Controller
 
             return $this->success($serviceTypesResponse, 'List of service types');
         } catch (Throwable $t) {
+            $this->logError('Error on list service types', $t);
             return $this->error('Error on list service types', 500);
         }
     }

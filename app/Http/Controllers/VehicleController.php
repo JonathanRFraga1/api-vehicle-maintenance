@@ -6,7 +6,6 @@ use App\Http\Requests\StoreVehicleRequest;
 use App\Http\Requests\UpdateVehicleRequest;
 use App\Http\Resources\VehicleResource;
 use App\Models\Vehicle;
-use App\Traits\ApiResponser;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,8 +15,6 @@ use Throwable;
 
 class VehicleController extends Controller
 {
-    use ApiResponser;
-
     const MAX_PAGE_SIZE = 15;
 
     /**
@@ -49,6 +46,7 @@ class VehicleController extends Controller
 
             return $this->success($vehiclesResponse, 'List of vehicles');
         } catch (Throwable $t) {
+            $this->logError('Error on list vehicles', $t);
             return $this->error('Error on list vehicles', 500);
         }
     }
@@ -71,6 +69,7 @@ class VehicleController extends Controller
                 'Vehicle stored'
             );
         } catch (Throwable $t) {
+            $this->logError('Error on store vehicle', $t);
             return $this->error('Error on store vehicle', 500);
         }
     }
@@ -93,6 +92,7 @@ class VehicleController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Vehicle not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on search vehicle', $t);
             return $this->error('Error on search vehicle', 500);
         }
     }
@@ -119,6 +119,7 @@ class VehicleController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Vehicle not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on update vehicle', $t);
             return $this->error('Error on update vehicle', 500);
         }
     }
@@ -140,6 +141,7 @@ class VehicleController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Vehicle not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on remove vehicle', $t);
             return $this->error('Error on remove vehicle', 500);
         }
     }

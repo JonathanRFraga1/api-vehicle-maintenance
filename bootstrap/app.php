@@ -27,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'status'  => 'error',
                     'message' => 'Unauthenticated.',
-                    'errors'  => null
+                    'errors'  => []
                 ], 401);
             }
         });
@@ -38,7 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'status'  => 'error',
                     'message' => 'This action is unauthorized.',
-                    'errors'  => null
+                    'errors'  => []
                 ], 403);
             }
         });

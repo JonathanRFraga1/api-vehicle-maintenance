@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateMaintenanceRequest;
 use App\Http\Resources\MaintenanceResource;
 use App\Models\Maintenance;
 use App\Models\Vehicle;
-use App\Traits\ApiResponser;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,8 +16,6 @@ use Throwable;
 
 class MaintenanceController extends Controller
 {
-    use ApiResponser;
-
     const MAX_PAGE_SIZE = 15;
 
     /**
@@ -53,6 +50,7 @@ class MaintenanceController extends Controller
 
             return $this->success($maintenancesResponse, 'List of maintenances');
         } catch (Throwable $t) {
+            $this->logError('Error on list maintenances', $t);
             return $this->error('Error on list maintenances', 500);
         }
     }
@@ -79,6 +77,7 @@ class MaintenanceController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Vehicle not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on store maintenance', $t);
             return $this->error('Error on store maintenance', 500);
         }
     }
@@ -101,6 +100,7 @@ class MaintenanceController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Maintenance not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on search maintenance', $t);
             return $this->error('Error on search maintenance', 500);
         }
     }
@@ -141,6 +141,7 @@ class MaintenanceController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Maintenances not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on search maintenances', $t);
             return $this->error('Error on search maintenances', 500);
         }
     }
@@ -167,6 +168,7 @@ class MaintenanceController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Maintenance not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on update maintenance', $t);
             return $this->error('Error on update maintenance', 500);
         }
     }
@@ -188,6 +190,7 @@ class MaintenanceController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Maintenance not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on remove maintenances', $t);
             return $this->error('Error on remove maintenance', 500);
         }
     }

@@ -6,7 +6,6 @@ use App\Http\Requests\StoreMaintenanceAttachmentRequest;
 use App\Http\Resources\MaintenanceAttachmentResource;
 use App\Models\Maintenance;
 use App\Models\MaintenanceAttachment;
-use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -17,8 +16,6 @@ use Throwable;
 
 class MaintenanceAttachmentController extends Controller
 {
-    use ApiResponser;
-
     const MAX_PAGE_SIZE = 15;
 
     /**
@@ -48,6 +45,7 @@ class MaintenanceAttachmentController extends Controller
 
             return $this->success($maintenanceAttachmentsResponse, 'List of maintenance attachments');
         } catch (Throwable $t) {
+            $this->logError('Error on list maintenance attachments', $t);
             return $this->error('Error on list maintenance attachments', 500);
         }
     }
@@ -87,6 +85,7 @@ class MaintenanceAttachmentController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Maintenance not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on store maintenance attachment', $t);
             return $this->error('Error on store maintenance attachment', 500);
         }
     }
@@ -114,6 +113,7 @@ class MaintenanceAttachmentController extends Controller
         } catch (ModelNotFoundException $e) {
             abort(404, 'Attachment not found.');
         } catch (Throwable $t) {
+            $this->logError('Error on show maintenance attachment', $t);
             abort(500, 'Could not retrieve file.');
         }
     }
@@ -142,6 +142,7 @@ class MaintenanceAttachmentController extends Controller
         } catch (ModelNotFoundException $e) {
             return $this->error('Maintenance attachment not found', 404);
         } catch (Throwable $t) {
+            $this->logError('Error on remove maintenance attachment', $t);
             return $this->error('Error on remove maintenance attachment', 500);
         }
     }
