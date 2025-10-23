@@ -19,7 +19,8 @@ return new class extends Migration
             $table->date('service_date');
             $table->unsignedInteger('mileage')->nullable();
             $table->foreignId('service_type_id')->nullable()->constrained()->onDelete('set null');
-            $table->timestamps();
+            $table->dateTime('created_at')->useCurrent();
+            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

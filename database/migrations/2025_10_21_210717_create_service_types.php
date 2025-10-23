@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('description');
             $table->string('identifier');
-            $table->timestamps();
+            $table->dateTime('created_at')->useCurrent();
+            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

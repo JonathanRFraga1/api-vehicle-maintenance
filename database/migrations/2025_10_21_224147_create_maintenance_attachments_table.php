@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('file_path');
             $table->string('mime_type')->nullable();
             $table->unsignedBigInteger('file_size')->nullable();
-            $table->timestamps();
+            $table->dateTime('created_at')->useCurrent();
+            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

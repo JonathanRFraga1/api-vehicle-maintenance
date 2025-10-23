@@ -19,7 +19,8 @@ return new class extends Migration
             $table->integer('year');
             $table->string('plate')->unique();
             $table->unsignedInteger('mileage');
-            $table->timestamps();
+            $table->dateTime('created_at')->useCurrent();
+            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

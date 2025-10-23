@@ -18,7 +18,8 @@ return new class extends Migration
             $table->enum('type', ['mileage', 'time']);
             $table->integer('value_to_alert')->unsigned();;
             $table->enum('status', ['waiting_send', 'sent', 'canceled', 'completed'])->default('waiting_send');
-            $table->timestamps();
+            $table->dateTime('created_at')->useCurrent();
+            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 
