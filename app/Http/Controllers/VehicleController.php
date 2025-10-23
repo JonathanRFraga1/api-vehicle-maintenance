@@ -10,6 +10,7 @@ use App\Traits\ApiResponser;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -33,8 +34,15 @@ class VehicleController extends Controller
             $perPage = $request->input('per_page', self::MAX_PAGE_SIZE);
             $perPage = ($perPage > self::MAX_PAGE_SIZE) ? self::MAX_PAGE_SIZE : $perPage;
 
-            $vehicles = Vehicle::query()
+            $vehicles = QueryBuilder::for(Vehicle::class)
                 ->where('user_id', '=', $userId)
+                ->allowedFilters([
+                    'brand',
+                    'model',
+                    'year',
+                    'plate'
+                ])
+                ->allowedSorts(['brand', 'model', 'year', 'mileage'])
                 ->paginate($perPage);
 
             $vehiclesResponse = VehicleResource::collection($vehicles);

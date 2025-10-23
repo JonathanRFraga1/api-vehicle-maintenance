@@ -11,6 +11,7 @@ use App\Traits\ApiResponser;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -34,11 +35,19 @@ class MaintenanceAlertController extends Controller
             $perPage = $request->input('per_page', self::MAX_PAGE_SIZE);
             $perPage = ($perPage > self::MAX_PAGE_SIZE) ? self::MAX_PAGE_SIZE : $perPage;
 
-            $maintenanceAlerts = MaintenanceAlert::query()
+            $maintenanceAlerts = QueryBuilder::for(MaintenanceAlert::class)
                 ->with(['vehicle'])
                 ->whereHas('vehicle', function ($query) use ($userId) {
                     $query->where('user_id', $userId);
                 })
+                ->allowedFilters([
+                    'vehicle.plate',
+                    'vehicle_id',
+                    'description',
+                    'status',
+                    'type'
+                ])
+                ->allowedSorts(['vehicle_id', 'vehicle.plate', 'created_at'])
                 ->paginate($perPage);
 
             $maintenanceAlertsResponse = MaintenanceAlertResource::collection($maintenanceAlerts);
@@ -115,12 +124,18 @@ class MaintenanceAlertController extends Controller
             $perPage = $request->input('per_page', self::MAX_PAGE_SIZE);
             $perPage = ($perPage > self::MAX_PAGE_SIZE) ? self::MAX_PAGE_SIZE : $perPage;
 
-            $maintenanceAlerts = MaintenanceAlert::query()
+            $maintenanceAlerts = QueryBuilder::for(MaintenanceAlert::class)
                 ->with(['vehicle'])
                 ->where('vehicle_id', '=', $vehicle->id)
                 ->whereHas('vehicle', function ($query) use ($userId) {
                     $query->where('user_id', $userId);
                 })
+                ->allowedFilters([
+                    'description',
+                    'status',
+                    'type'
+                ])
+                ->allowedSorts(['status', 'created_at'])
                 ->paginate($perPage);
 
             $maintenanceAlertsResponse = MaintenanceAlertResource::collection($maintenanceAlerts);
@@ -132,7 +147,6 @@ class MaintenanceAlertController extends Controller
             return $this->error('Error on search maintenance alerts', 500);
         }
     }
-
 
     /**
      * Função responsável por atualizar os dados de um alerta de manutenção cadastrado pelo usuário
@@ -159,7 +173,6 @@ class MaintenanceAlertController extends Controller
         } catch (ModelNotFoundException|NotFoundHttpException $e) {
             return $this->error('Maintenance alert not found', 404);
         } catch (Throwable $t) {
-            dd($t);
             return $this->error('Error on update maintenance alert', 500);
         }
     }

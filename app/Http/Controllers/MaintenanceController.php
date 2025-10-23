@@ -11,6 +11,7 @@ use App\Traits\ApiResponser;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -34,11 +35,18 @@ class MaintenanceController extends Controller
             $perPage = $request->input('per_page', self::MAX_PAGE_SIZE);
             $perPage = ($perPage > self::MAX_PAGE_SIZE) ? self::MAX_PAGE_SIZE : $perPage;
 
-            $maintenances = Maintenance::query()
+            $maintenances = QueryBuilder::for(Maintenance::class)
                 ->with(['vehicle'])
                 ->whereHas('vehicle', function ($query) use ($userId) {
                     $query->where('user_id', $userId);
                 })
+                ->allowedFilters([
+                    'vehicle_id',
+                    'service_date',
+                    'mileage',
+                    'vehicle.plate'
+                ])
+                ->allowedSorts(['vehicle_id', 'service_date', 'mileage'])
                 ->paginate($perPage);
 
             $maintenancesResponse = MaintenanceResource::collection($maintenances);
@@ -114,12 +122,17 @@ class MaintenanceController extends Controller
             $perPage = $request->input('per_page', self::MAX_PAGE_SIZE);
             $perPage = ($perPage > self::MAX_PAGE_SIZE) ? self::MAX_PAGE_SIZE : $perPage;
 
-            $maintenances = Maintenance::query()
+            $maintenances = QueryBuilder::for(Maintenance::class)
                 ->with(['vehicle'])
                 ->where('vehicle_id', '=', $vehicle->id)
                 ->whereHas('vehicle', function ($query) use ($userId) {
                     $query->where('user_id', $userId);
                 })
+                ->allowedFilters([
+                    'service_date',
+                    'mileage',
+                ])
+                ->allowedSorts(['id', 'service_date', 'mileage'])
                 ->paginate($perPage);
 
             $maintenancesResponse = MaintenanceResource::collection($maintenances);

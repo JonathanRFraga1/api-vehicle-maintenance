@@ -7,6 +7,7 @@ use App\Models\ServiceType;
 use App\Traits\ApiResponser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 use Throwable;
 
 class ServiceTypeController extends Controller
@@ -27,7 +28,11 @@ class ServiceTypeController extends Controller
             $perPage = $request->input('per_page', self::MAX_PAGE_SIZE);
             $perPage = ($perPage > self::MAX_PAGE_SIZE) ? self::MAX_PAGE_SIZE : $perPage;
 
-            $serviceTypes = ServiceType::query()
+            $serviceTypes = QueryBuilder::for(ServiceType::class)
+                ->allowedFilters([
+                    'description',
+                    'identifier',
+                ])
                 ->paginate($perPage);
 
             $serviceTypesResponse = ServiceTypeResource::collection($serviceTypes);
