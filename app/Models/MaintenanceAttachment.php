@@ -15,10 +15,11 @@ class MaintenanceAttachment extends Model
         'description',
         'file_name',
         'file_path',
-        'mime_type'
+        'mime_type',
+        'file_size',
     ];
 
-    public function maitenance(): BelongsTo
+    public function maintenance(): BelongsTo
     {
         return $this->belongsTo(Maintenance::class, 'maintenance_id', 'id');
     }
