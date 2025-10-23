@@ -5,6 +5,8 @@ namespace App\Http\Requests;
 use App\Models\ServiceType as ModelsServiceType;
 use App\Rules\ServiceType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class StoreMaintenanceRequest extends FormRequest
 {
@@ -21,7 +23,9 @@ class StoreMaintenanceRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        $serviceType = ModelsServiceType::where('identifier', $this->service_type)->first();
+        $serviceTypeIdentifier = Str::lower(trim($this->service_type));
+        $serviceTypeIdentifier = preg_replace('/[^a-z_]/', '', $serviceTypeIdentifier);
+        $serviceType = ModelsServiceType::where('identifier', $serviceTypeIdentifier)->first();
 
         if ($serviceType) {
             $this->merge([
@@ -43,10 +47,10 @@ class StoreMaintenanceRequest extends FormRequest
             'service_date' => 'required|date',
             'mileage'      => 'required|integer|min:0',
             'vehicle_id'   => 'required|integer',
-            'service_type' => [
+            'service_type_id'   => [
                 'required',
-                'string',
-                new ServiceType()
+                'integer',
+                Rule::exists('service_types', 'id'),
             ],
         ];
     }
