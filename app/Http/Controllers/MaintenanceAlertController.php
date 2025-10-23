@@ -20,7 +20,7 @@ class MaintenanceAlertController extends Controller
 
     const MAX_PAGE_SIZE = 15;
 
-     /**
+    /**
      * Função responsável por listar os alertas de manutenção cadastrados pelo usuário
      *
      * @param Request $request

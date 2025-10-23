@@ -31,7 +31,8 @@ Route::middleware('auth:api')->group(function () {
         ->name('maintenance-attachments.show');
     Route::delete('maintenance-attachments/{attachment}', [MaintenanceAttachmentController::class, 'destroy']);
 
-    // Route::get('service-types', ServiceTypeController::class);
+    // Service Types
+    Route::get('service-types', [ServiceTypeController::class, 'index']);
 
     // Nested routes
     Route::get('vehicles/{vehicle}/maintenances', [MaintenanceController::class, 'byVehicle']);
