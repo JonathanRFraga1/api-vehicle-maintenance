@@ -4,6 +4,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -21,7 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
 
         // 401 Handler
-        $exceptions->renderable(function (AuthenticationException $e, $request) {
+        $exceptions->renderable(function (AuthenticationException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
                     'status'  => 'error',
@@ -32,7 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         // 403 Handler
-        $exceptions->renderable(function (AccessDeniedHttpException $e, $request) {
+        $exceptions->renderable(function (AccessDeniedHttpException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
                     'status'  => 'error',
@@ -43,18 +44,18 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         // 404 Handler
-        $exceptions->renderable(function (NotFoundHttpException $e, $request) {
+        $exceptions->renderable(function (NotFoundHttpException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
                     'status'  => 'error',
                     'message' => 'Resource not found.',
-                    'errors'  => null
+                    'errors'  => []
                 ], 404);
             }
         });
 
         // 422 Handler
-        $exceptions->renderable(function (ValidationException $e, $request) {
+        $exceptions->renderable(function (ValidationException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
                     'status'  => 'error',
@@ -65,14 +66,14 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         // 500 Handler
-        $exceptions->renderable(function (Throwable $e, $request) {
+        $exceptions->renderable(function (Throwable $e, Request $request) {
             if ($request->is('api/*')) {
                 // Apenas se o debug estiver ativo
                 if (!config('app.debug')) {
                     return response()->json([
                         'status'  => 'error',
                         'message' => 'Internal Server Error.',
-                        'errors'  => null
+                        'errors'  => []
                     ], 500);
                 }
             }
