@@ -22,7 +22,7 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('vehicles', VehicleController::class);
     Route::apiResource('maintenances', MaintenanceController::class);
     Route::apiResource('maintenance-alerts', MaintenanceAlertController::class);
-    // Route::apiResource('service-types', ServiceTypeController::class);
+    // Route::get('service-types', ServiceTypeController::class);
 
     // Nested routes
     Route::get('vehicles/{vehicle}/maintenances', [MaintenanceController::class, 'byVehicle']);
