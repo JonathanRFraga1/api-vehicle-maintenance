@@ -1,61 +1,132 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# API de Gerenciamento de Manutenção de Veículos (Demo Técnica)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este projeto é uma API RESTful completa, construída em Laravel 12, para um sistema de gestão de manutenção de veículos.
 
-## About Laravel
+A aplicação permite que os utilizadores se registem, gira os seus veículos pessoais, e rastreiem um histórico detalhado de manutenções, alertas futuros e anexos (como notas fiscais ou fotos).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Destaques da Arquitetura
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Este projeto foi desenhado para demonstrar proficiência nos seguintes conceitos do ecossistema Laravel:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+  * **Autenticação JWT:** Sistema completo de registo, login, logout e refresh de token usando `tymon/jwt-auth`.
+  * **Segurança (Policies):** O acesso aos recursos (Veículos, Manutenções, etc.) é estritamente controlado por Policies (ex: `VehiclePolicy`). Um utilizador *só* pode aceder ou modificar os seus próprios dados.
+  * **Validação (Form Requests):** A lógica de validação de entrada é isolada em classes de Form Request (ex: `StoreVehicleRequest`), mantendo os Controladores limpos.
+  * **Regras Customizadas:** Demonstração de regras de negócio personalizadas, como a `PlateFormat`, que valida placas nos formatos Renavan (AAA1234) e Mercosul (AAA1B23).
+  * **Respostas Padronizadas (Traits):** O uso da `ApiResponser` Trait assegura que todas as respostas JSON da API (sucesso ou erro) sigam uma estrutura consistente.
+  * **Transformação de Dados (API Resources):** Os dados de saída são formatados através de API Resources (ex: `VehicleResource`), que atuam como uma camada de transformação, protegendo a estrutura da base de dados e formatando dados para o cliente.
+  * **Querying Avançado:** Os endpoints de listagem (index) usam `spatie/laravel-query-builder` para permitir filtragem, ordenação e inclusão de *queries* complexas diretamente via parâmetros de URL.
+  * **Logging Centralizado:** Erros 500 são automaticamente capturados e registados com contexto completo (utilizador, URL, IP, erro) através de um método *helper* no `Controller` base, sem poluir a lógica de negócio.
+  * **Gestão de Ficheiros:** Upload seguro de ficheiros (`multipart/form-data`) e download protegido por autorização (ex: `MaintenanceAttachmentController`).
 
-## Learning Laravel
+-----
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Como Executar (Ambiente de Desenvolvimento com Laravel Sail)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Este projeto está configurado para ser executado com o [Laravel Sail](https://laravel.com/docs/sail), um ambiente de desenvolvimento local leve baseado em Docker.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Não é necessário** instalar PHP, Composer, MySQL ou qualquer outra dependência na sua máquina. Apenas o Docker.
 
-## Laravel Sponsors
+### 1\. Pré-requisitos
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+  * [Docker Desktop](https://www.docker.com/products/docker-desktop/) (ou Docker Engine no Linux)
 
-### Premium Partners
+### 2\. Instalação (Passo a Passo)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+1.  **Clone o repositório:**
 
-## Contributing
+    ```bash
+    git clone https://github.com/JonathanRFraga1/api-vehicle-maintenance.git
+    cd api-vehicle-maintenance
+    ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2.  **Copie o ficheiro de ambiente:**
+    O Sail é configurado através do `.env`.
 
-## Code of Conduct
+    ```bash
+    cp .env.example .env
+    ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+3.  **Instale as dependências (via Sail):**
+    Este comando corre o `composer install` *dentro* de um novo contentor Docker temporário.
 
-## Security Vulnerabilities
+    ```bash
+    docker run --rm \
+        -u "$(id -u):$(id -g)" \
+        -v $(pwd):/app \
+        -w /app \
+        laravelsail/php83-composer:latest \
+        composer install --ignore-platform-reqs
+    ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+4.  **Inicie os Contentores (Sail):**
+    Este comando irá construir e iniciar os contentores da aplicação (PHP, Nginx, MySQL, etc.) em segundo plano.
 
-## License
+    ```bash
+    ./vendor/bin/sail up -d
+    ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+5.  **Gere as Chaves da Aplicação:**
+    Agora que os contentores estão em execução, use o "alias" do Sail para executar comandos artisan.
+
+    ```bash
+    ./vendor/bin/sail artisan key:generate
+    ./vendor/bin/sail artisan jwt:secret
+    ```
+
+### 3\. Base de Dados
+
+O Sail já criou a sua base de dados. Agora, execute as migrações (que criam as tabelas) e os **seeders** (que povoam a base de dados com dados de teste):
+
+```bash
+./vendor/bin/sail artisan migrate --seed
+```
+
+A sua aplicação está agora 100% funcional e pronta para ser testada.
+
+-----
+
+## Como Testar a API (Postman)
+
+A forma mais fácil de testar todos os endpoints é usando a coleção Postman deste projeto. Você pode acessar à coleção de duas maneiras:
+
+**Opção 1: Acessar Online (Recomendado)**
+
+Clique no link abaixo para acessar à coleção diretamente no seu navegador ou importá-la para a sua aplicação Postman:
+
+[Postman online](https://www.postman.com/cloudy-firefly-986210/workspace/api-vehicle-maintenance/collection/20098354-aa37532c-d79c-4590-b473-8d7b4910eeef?action=share&source=collection_link&creator=20098354)
+
+**Opção 2: Importar o Arquivo**
+
+1.  **Aplicação em Execução:**
+    A API estará em execução em: `http://localhost` (O Sail, por defeito, mapeia a porta 80 do host).
+
+2.  **Importe a Coleção:**
+
+      * Abra o Postman.
+      * Clique em "Import".
+      * Selecione o arquivo `API.postman_collection.json` da raiz deste projeto.
+
+3.  **Configure a Variável `base_uri`:**
+
+      * Na coleção importada, clique nos três pontinhos (...) e vá a "Edit".
+      * Vá ao separador **"Variables"**.
+      * No campo `base_uri`, altere o "CURRENT VALUE" para o URL do seu servidor Sail: `http://localhost`.
+
+### Fluxo de Teste (Login e Autenticação)
+
+Os *seeders* já criaram utilizadores de teste para si.
+
+**Utilizadores de Teste:**
+
+  * **Email:** `joao@email.com` | **Senha:** `123456`
+  * **Email:** `maria@email.com` | **Senha:** `123456`
+
+**Para se autenticar:**
+
+1.  Na coleção Postman, abra a pasta "Auth" e execute a requisição `POST /api/login`.
+2.  Use um dos utilizadores de teste no *Body* da requisição.
+3.  Ao executar a requisição, o access token sera automaticamente mapeado para a váriavel {{token}}.
+
+Agora, todas as outras requisições protegidas na coleção (como `GET /api/vehicles`) irão funcionar automaticamente.
+
+A documentação detalhada de cada endpoint (parâmetros, corpos de requisição e respostas de exemplo) está disponível no separador **"Description"** de cada requisição individual dentro do Postman.
